@@ -37,18 +37,18 @@ fun ResultScreen(input: SimulasiInput, onBack: () -> Unit) {
     val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
 
     val penginapanRate = when (input.preferensiPenginapan.lowercase()) {
-        "hostel" -> 100_000
-        "guest house" -> 200_000
-        else -> 300_000
+        "hostel" -> 200_000
+        "guest house" -> 400_000
+        else -> 600_000
     }
 
     val makanRate = when (input.gayaHidup.lowercase()) {
-        "hemat" -> 40_000
-        "standar" -> 80_000
-        else -> 150_000
+        "hemat" -> 100_000
+        "standar" -> 200_000
+        else -> 350_000
     }
 
-    val transport = 100_000 * input.jumlahOrang
+    val transport = 150_000 * input.jumlahOrang
     val akomodasi = penginapanRate * input.durasiHari * input.jumlahOrang
     val makan = makanRate * input.durasiHari * input.jumlahOrang
     val total = akomodasi + makan + transport
