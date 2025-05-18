@@ -1,5 +1,6 @@
 package com.example.okegass1.ui.theme
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,14 +12,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.okegass1.R
 
+
 @Composable
 fun LoginScreen(navController: NavController) {
+    val context = LocalContext.current
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -69,7 +74,13 @@ fun LoginScreen(navController: NavController) {
             }
 
             Button(
-                onClick = { navController.navigate("home") },
+                onClick = {
+                    // Simpan email ke SharedPreference
+                    val prefs = context.getSharedPreferences("user_profile", Context.MODE_PRIVATE)
+                    prefs.edit().putString("email", email).apply()
+
+                    navController.navigate("home")
+                },
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()

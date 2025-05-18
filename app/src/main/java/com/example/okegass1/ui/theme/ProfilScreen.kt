@@ -20,15 +20,14 @@ import androidx.navigation.NavController
 fun ProfileScreen(navController: NavController, email: String, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    // Ambil nama dari SharedPreferences
-    val sharedPref = remember {
-        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    }
     var nama by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
 
-    // Ambil value dari shared preferences saat pertama kali composable dijalankan
+    // Ambil nama dari SharedPreferences yang sesuai
     LaunchedEffect(Unit) {
-        nama = sharedPref.getString("user_nama", "") ?: ""
+        val prefs = context.getSharedPreferences("user_profile", Context.MODE_PRIVATE)
+        nama = prefs.getString("nama", "") ?: ""
+        email = prefs.getString("email", "") ?: ""
     }
 
     Column(
@@ -85,12 +84,13 @@ fun ProfileScreen(navController: NavController, email: String, modifier: Modifie
             color = Color(0xFF004D40),
             onClick = {
                 navController.navigate("login") {
-                    popUpTo("home") { inclusive = true } // clear backstack
+                    popUpTo("home") { inclusive = true }
                 }
             }
         )
     }
 }
+
 
 @Composable
 fun ProfileMenuItem(

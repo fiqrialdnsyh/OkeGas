@@ -26,6 +26,7 @@ fun InformasiPribadiScreen(
     // Ambil nilai tersimpan atau default kosong
     var nama by remember { mutableStateOf(getSavedValue(context, "nama") ?: "") }
     var nomorTelepon by remember { mutableStateOf(getSavedValue(context, "telepon") ?: "") }
+    var userEmail by remember { mutableStateOf(getSavedValue(context, "email") ?: "") }
 
     Scaffold(
         topBar = {
@@ -55,6 +56,7 @@ fun InformasiPribadiScreen(
                 onValueChange = { nama = it },
                 label = { Text("Nama Lengkap") },
                 singleLine = true,
+                enabled = false,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -74,35 +76,11 @@ fun InformasiPribadiScreen(
                 onValueChange = { nomorTelepon = it },
                 label = { Text("Nomor Telepon") },
                 singleLine = true,
+                enabled = false,
                 modifier = Modifier.fillMaxWidth()
             )
-
-            // Tombol Simpan
-            Button(
-                onClick = {
-                    saveToPrefs(context, "nama", nama)
-                    saveToPrefs(context, "telepon", nomorTelepon)
-                    navController.popBackStack()
-                },
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Text("Simpan")
-            }
+            
         }
     }
 }
 
-// Fungsi simpan data
-fun saveToPrefs(context: Context, key: String, value: String) {
-    val prefs = context.getSharedPreferences("user_profile", Context.MODE_PRIVATE)
-    prefs.edit().putString(key, value).apply()
-}
-
-// Fungsi ambil data
-fun getSavedValue(context: Context, key: String): String? {
-    val prefs = context.getSharedPreferences("user_profile", Context.MODE_PRIVATE)
-    return prefs.getString(key, null)
-}

@@ -1,5 +1,6 @@
 package com.example.okegass1.ui.theme
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,13 +26,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditProfileScreen(navController: NavController) {
     val primaryColor = Color(0xFF20B2AA)
+    val context = LocalContext.current
 
-    var name by remember { mutableStateOf(TextFieldValue("Nama User")) }
-    var email by remember { mutableStateOf(TextFieldValue("user@email.com")) }
-    var phone by remember { mutableStateOf(TextFieldValue("08123456789")) }
+    // Ambil nilai tersimpan atau default kosong
+    var nama by remember { mutableStateOf(getSavedValue(context, "nama") ?: "") }
+    var nomorTelepon by remember { mutableStateOf(getSavedValue(context, "telepon") ?: "") }
+    var userEmail by remember { mutableStateOf(getSavedValue(context, "email") ?: "") }
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -85,51 +87,37 @@ fun EditProfileScreen(navController: NavController) {
 
             // Input Field
             OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Nama") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = primaryColor,
-                    cursorColor = primaryColor
-                )
+                value = nama,
+                onValueChange = { nama = it },
+                label = { Text("Nama Lengkap") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
             )
 
+            // Email (readonly)
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = userEmail,
+                onValueChange = {},
                 label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = primaryColor,
-                    cursorColor = primaryColor
-                )
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
             )
 
+            // Input Nomor Telepon
             OutlinedTextField(
-                value = phone,
-                onValueChange = { phone = it },
-                label = { Text("No. Telepon") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = primaryColor,
-                    cursorColor = primaryColor
-                )
+                value = nomorTelepon,
+                onValueChange = { nomorTelepon = it },
+                label = { Text("Nomor Telepon") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
             )
 
             // Tombol Simpan
             Button(
                 onClick = {
-                    if (name.text.isNotBlank() && email.text.isNotBlank() && phone.text.isNotBlank()) {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("Perubahan berhasil disimpan")
-                        }
-                        navController.popBackStack()
-                    } else {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("Harap isi semua data dengan lengkap")
-                        }
-                    }
+                    saveToPrefs(context, "nama", nama)
+                    saveToPrefs(context, "telepon", nomorTelepon)
+                    navController.popBackStack()
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = primaryColor),
                 modifier = Modifier
@@ -141,4 +129,16 @@ fun EditProfileScreen(navController: NavController) {
             }
         }
     }
+}
+
+// Fungsi simpan data
+fun saveToPrefs(context: Context, key: String, value: String) {
+    val prefs = context.getSharedPreferences("user_profile", Context.MODE_PRIVATE)
+    prefs.edit().putString(key, value).apply()
+}
+
+// Fungsi ambil data
+fun getSavedValue(context: Context, key: String): String? {
+    val prefs = context.getSharedPreferences("user_profile", Context.MODE_PRIVATE)
+    return prefs.getString(key, null)
 }
